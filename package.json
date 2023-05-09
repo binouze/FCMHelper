@@ -1,0 +1,13 @@
+{
+  "name": "com.binouze.fcmhelper",
+  "version": "1.0.0",
+  "unity": "2021.3",
+  "displayName": "Firebase Messaging Helper",
+  "description": "Firebase Messaging integration for Unity with image support on push notifications",
+  "changelogUrl": "https://github.com/binouze/FCMHelper/releases",
+  "documentationUrl": "https://github.com/binouze/FCMHelper",
+  "author": {
+    "name": "Benjamin BOUFFIER",
+    "email": "benjamin.bouffier@gmail.com"
+  }
+}
