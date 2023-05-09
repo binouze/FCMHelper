@@ -24,3 +24,9 @@ The unity implementation of FirebaseMessaging does not supports Images in push n
 This plugin just add this support.
 
 See Firebase Messaging documentation here: https://firebase.google.com/docs/cloud-messaging/unity/client
+
+
+## Notes
+
+As I use this package for quite a lot of games, I added the Firebase SDK (10.7.0) files in it to facilitate the upgrade process of the games.
+Feel free to remove them if needed ;)

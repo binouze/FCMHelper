@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
 using UnityEditor.iOS.Xcode.Extensions;
+using UnityEngine;
 
 namespace com.binouze.fcmhelper.Plugins.FCMHelper.Editor
 {
@@ -47,6 +48,8 @@ namespace com.binouze.fcmhelper.Plugins.FCMHelper.Editor
      
                 proj.WriteToFile(projPath);
                 plist.WriteToFile(plistPath);
+
+                Debug.Log( "FCMHelper - xCode project patched !" );
             }
         }
     }
