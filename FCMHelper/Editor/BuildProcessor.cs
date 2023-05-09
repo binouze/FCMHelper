@@ -1,17 +1,30 @@
 using System.IO;
 using UnityEditor;
-using UnityEditor.Callbacks;
+using UnityEditor.Build;
+using UnityEditor.Build.Reporting;
 using UnityEditor.iOS.Xcode;
 using UnityEditor.iOS.Xcode.Extensions;
 using UnityEngine;
 
 namespace com.binouze.fcmhelper.Plugins.FCMHelper.Editor
 {
-    public static class BuildProcessor
+    public class BuildProcessor : IPostprocessBuildWithReport
     {
         private const string PATH_TO_NOTIFICATION_SERVICE = "Packages/com.binouze.fcmhelper/FCMHelper/NotificationServiceExtension";
         
-        [PostProcessBuild( 42 )] //must be between 40 and 50 to ensure that it's not overriden by Podfile generation (40) and that it's added before "pod install" (50)
+        public int  callbackOrder => 41; //must be between 40 and 50 to ensure that it's not overriden by Podfile generation (40) and that it's added before "pod install" (50)
+
+        /// <summary>
+        ///   Implement this function to receive a callback after the build is complete.
+        /// </summary>
+        /// <param name="report">A BuildReport containing information about the build, such as the target platform and output path.</param>
+        public void OnPostprocessBuild( BuildReport report )
+        {
+            Debug.Log( "FCMHelper.OnPreprocessBuild for target " + report.summary.platform + " at path " + report.summary.outputPath );
+            PostProcessBuild_iOS( report.summary.platform, report.summary.outputPath );
+        }
+
+        //[PostProcessBuild( 42 )] //must be between 40 and 50 to ensure that it's not overriden by Podfile generation (40) and that it's added before "pod install" (50)
         private static void PostProcessBuild_iOS(BuildTarget target, string pathToBuiltProject)
         {
             if( target == BuildTarget.iOS )
@@ -25,7 +38,7 @@ namespace com.binouze.fcmhelper.Plugins.FCMHelper.Editor
                 var projPath = PBXProject.GetPBXProjectPath(pathToBuiltProject);
                 var proj     = new PBXProject();
                 proj.ReadFromFile (projPath);
-                var targetGUID = proj.TargetGuidByName ("Unity-iPhone");
+                var targetGUID = proj.GetUnityMainTargetGuid();
      
                 var plistPath = pathToBuiltProject + "/Info.plist";
                 var plist     = new PlistDocument();
@@ -49,7 +62,7 @@ namespace com.binouze.fcmhelper.Plugins.FCMHelper.Editor
                 proj.WriteToFile(projPath);
                 plist.WriteToFile(plistPath);
 
-                Debug.Log( "FCMHelper - xCode project patched !" );
+                Debug.Log( "FCMHelper - PostProcessBuild_iOS Done!" );
             }
         }
     }
