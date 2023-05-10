@@ -10,29 +10,27 @@ void _FCMHelper_SendLocalNotification(char* instanceId, char* title, char* body,
 
     if (attachmentFile != nil)
     {
+        //TODO try to make it work with external urls
+    
         NSString *attachmentRes =  [NSString stringWithUTF8String:attachmentFile];
-        NSFileManager* fileMgr = [NSFileManager defaultManager];
-        BOOL fileExists = [fileMgr fileExistsAtPath:attachmentRes];
-        if (fileExists == NO){
-            NSLog(@"Missing Attachment %@", attachmentRes);
+        
+        NSURL *URL   = [NSURL fileURLWithPath:attachmentRes];
+        //NSData *data = [NSData dataWithContentsOfURL:URL];
+        
+        NSError *attachmentError = nil;
+        //note when you attach the file is automatically deleted
+        UNNotificationAttachment* attachment = [UNNotificationAttachment attachmentWithIdentifier: [attachmentRes lastPathComponent]
+                                                URL:URL
+                                                options:nil
+                                                 error:&attachmentError];
+        if (attachmentError)
+        {
+            NSLog(@"%@", attachmentError.localizedDescription);
+            NSLog(@"Attachment BAD %@", attachmentRes);
         }else{
-            NSLog(@"Attachment %@", attachmentRes);
-            NSURL *URL = [NSURL fileURLWithPath:attachmentRes];
-            NSError *attachmentError = nil;
-            //note when you attach the file is automatically deleted
-            UNNotificationAttachment* attachment = [UNNotificationAttachment attachmentWithIdentifier: [attachmentRes lastPathComponent]
-                                                    URL:URL
-                                                    options:nil
-                                                     error:&attachmentError];
-            if (attachmentError)
-            {
-                NSLog(@"%@", attachmentError.localizedDescription);
-                NSLog(@"Attachment BAD %@", attachmentRes);
-            }else{
-                content.attachments = @[attachment];
-                NSLog(@"Attachment OK %@", attachmentRes);
-            }
-        }        
+            content.attachments = @[attachment];
+            NSLog(@"Attachment OK %@", attachmentRes);
+        }
     }
     
     UNNotificationTrigger* trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval: timeIntervalSecs repeats:NO];
