@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.graphics.Color;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -27,7 +28,7 @@ public class PictureStyleNotification extends AsyncTask<String, Void, Bitmap>
     private String titre, texte, image, typeString, dlink, channelId, channelName, icon, packageName;
     private int color;
 
-    public PictureStyleNotification(Context context, String titre, String texte, int color, /*String typeString,*/ String image, String dlink, String channelId, String channelName, String icon, String packageName )
+    public PictureStyleNotification(Context context, String titre, String texte, String colorString, /*String typeString,*/ String image, String dlink, String channelId, String channelName, String icon, String packageName )
     {
         super();
 
@@ -35,7 +36,7 @@ public class PictureStyleNotification extends AsyncTask<String, Void, Bitmap>
         this.image         = image;
         this.titre         = titre;
         this.texte         = texte;
-        this.color         = color;
+        this.color         = Color.ParseColor(colorString);
         this.dlink         = dlink;
         this.typeString    = "";//typeString;
         this.channelId     = channelId;
