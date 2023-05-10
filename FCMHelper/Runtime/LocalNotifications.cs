@@ -9,10 +9,10 @@ namespace com.binouze.FCMHelper
     {
         #if UNITY_IOS
         [DllImport("__Internal")]
-        private static extern void _FCMHelper_SendLocalNotification(string instanceId, string title, string body, string attachmentFile, int timeIntervalSecs);
+        private static extern void _FCMHelper_SendLocalNotification(string instanceId, string title, string body, string imageUrl, int timeIntervalSecs);
         #endif
         
-        public static void Send( string title, string body, string imageUrl )
+        public static void Send( string title, string body, string imageUrl, int delaySec )
         {
             #if UNITY_ANDROID
             
@@ -21,8 +21,8 @@ namespace com.binouze.FCMHelper
                 instanceId:       DateTime.Now.ToString("yyyyMMddhhmmss"), 
                 title:            title,
                 body:             body, 
-                attachmentFile:   imageUrl, // currently not working with external urls
-                timeIntervalSecs: 1
+                imageUrl:         imageUrl, // currently not working with external urls
+                timeIntervalSecs: delaySec
             );
             #endif
         }
