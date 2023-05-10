@@ -23,8 +23,8 @@ class NotificationService: UNNotificationServiceExtension {
             
             //contentHandler(bestAttemptContent)
             // Log Delivery signals and export to BigQuery.
-            Messaging.serviceExtension()
-              .exportDeliveryMetricsToBigQuery(withMessageInfo: request.content.userInfo)
+            //Messaging.serviceExtension()
+            //  .exportDeliveryMetricsToBigQuery(withMessageInfo: request.content.userInfo)
 
             // Add image, call this last to finish with the content handler.
             Messaging.serviceExtension()
