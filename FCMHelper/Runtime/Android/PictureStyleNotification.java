@@ -1,4 +1,4 @@
-package com.binouze.FCMHelper;
+package com.binouze;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -27,7 +27,7 @@ public class PictureStyleNotification extends AsyncTask<String, Void, Bitmap>
     private String titre, texte, image, typeString, dlink, channelId, channelName, icon, packageName;
     private int color;
 
-    public PictureStyleNotification(Context context, String titre, String texte, int color, String typeString, String image, String dlink, String channelId, String channelName, String icon, String packageName )
+    public PictureStyleNotification(Context context, String titre, String texte, int color, /*String typeString,*/ String image, String dlink, String channelId, String channelName, String icon, String packageName )
     {
         super();
 
@@ -37,7 +37,7 @@ public class PictureStyleNotification extends AsyncTask<String, Void, Bitmap>
         this.texte         = texte;
         this.color         = color;
         this.dlink         = dlink;
-        this.typeString    = typeString;
+        this.typeString    = "";//typeString;
         this.channelId     = channelId;
         this.channelName   = channelName;
         this.icon          = icon;
@@ -107,7 +107,7 @@ public class PictureStyleNotification extends AsyncTask<String, Void, Bitmap>
                 .setAutoCancel(true)
                 .setContentIntent( pendingIntent )
                 .setColor( color )
-                .setSortKey( typeString )
+                //.setSortKey( typeString )
                 .setDefaults( NotificationCompat.DEFAULT_ALL )
                 .setPriority( NotificationCompat.PRIORITY_HIGH )
                 .setGroup(packageName+"default");
