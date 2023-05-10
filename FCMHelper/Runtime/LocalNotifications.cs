@@ -2,7 +2,9 @@ using System;
 #if UNITY_IOS
 using System.Runtime.InteropServices;
 #endif
-
+#if UNITY_ANDROID
+using UnityEngine;
+#endif
 namespace com.binouze.FCMHelper
 {
     public class LocalNotifications
@@ -12,13 +14,13 @@ namespace com.binouze.FCMHelper
         private static extern void _FCMHelper_SendLocalNotification(string instanceId, string title, string body, string imageUrl, int timeIntervalSecs);
         #endif
         
-        public static void Send( string title, string body, string imageUrl, int delaySec )
+        public static void Send( string title, string body, string imageUrl, int delaySec = 0 )
         {
-            //String title, String message, String image, int color, String dlink, String channelId, String channelName, String icon, String packageName
+            //String title, String message, String image, string color, String dlink, String channelId, String channelName, String icon, String packageName
             
             #if UNITY_ANDROID
             using var cls = new AndroidJavaClass("com.binouze.LocalNotifications");
-            cls.CallStatic("Send", title, body, imageUrl, 0, "", "default", "default", "ic_stat_ic_notification", "com.lagoonsoft.pb" );
+            cls.CallStatic("Send", title, body, imageUrl, "#ffffff", "", "default", "default", "ic_stat_ic_notification", "com.lagoonsoft.pb" );
             #elif UNITY_IOS
             _FCMHelper_SendLocalNotification(
                 instanceId:       DateTime.Now.ToString("yyyyMMddhhmmss"), 
