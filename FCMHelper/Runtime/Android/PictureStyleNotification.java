@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.graphics.Color;
 
@@ -18,17 +17,31 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import android.net.Uri;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class PictureStyleNotification extends AsyncTask<String, Void, Bitmap> 
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
+
+public class PictureStyleNotification// extends AsyncTask<String, Void, Bitmap>
 {
     private static int  ID = 100;
 
-    private Context mContext;
-    private String titre, texte, image, typeString, dlink, channelId, channelName, icon, packageName;
-    private int color;
+    private final Context mContext;
+    private final String titre;
+    private final String texte;
+    private final String image;
+    private final String dlink;
+    private final String channelId;
+    private final String channelName;
+    private final String icon;
+    private final String packageName;
+    private final int color;
 
-    public PictureStyleNotification(Context context, String titre, String texte, String colorString, /*String typeString,*/ String image, String dlink, String channelId, String channelName, String icon, String packageName )
+    private Bitmap bmpData;
+
+    public PictureStyleNotification(Context context, String titre, String texte, String colorString, String image, String dlink, String channelId, String channelName, String icon, String packageName )
     {
         super();
 
@@ -36,43 +49,46 @@ public class PictureStyleNotification extends AsyncTask<String, Void, Bitmap>
         this.image         = image;
         this.titre         = titre;
         this.texte         = texte;
-        this.color         = Color.ParseColor(colorString);
+        this.color         = Color.parseColor(colorString);
         this.dlink         = dlink;
-        this.typeString    = "";//typeString;
         this.channelId     = channelId;
         this.channelName   = channelName;
         this.icon          = icon;
         this.packageName   = packageName;
     }
 
-    @Override
-    protected Bitmap doInBackground(String... params)
+    public void afficher()
     {
-        if( this.image != null && this.image.length() > 0 )
+        // si il y a une image, on doit d'abord la telecharger
+        if( image != null && image.length() > 0 )
         {
-            InputStream in;
-            try
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Handler handler          = new Handler(Looper.getMainLooper());
+
+            executor.execute( () ->
             {
-                URL url = new URL(this.image);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                in = connection.getInputStream();
-                return BitmapFactory.decodeStream(in);
-            }
-            catch( IOException e )
-            {
-                e.printStackTrace();
-            }
+                InputStream in;
+                try
+                {
+                    URL url = new URL(image);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setDoInput(true);
+                    connection.connect();
+                    in = connection.getInputStream();
+                    bmpData = BitmapFactory.decodeStream(in);
+                }
+                catch( IOException e )
+                {
+                    e.printStackTrace();
+                }
+
+                handler.post( () -> onPostExecute( bmpData ) );
+            });
         }
-        return null;
     }
 
-    @Override
     protected void onPostExecute( Bitmap result )
     {
-        super.onPostExecute(result);
-
         Intent intent; 
         if( dlink != null && dlink.length() > 1 ) { intent = new Intent( Intent.ACTION_VIEW, Uri.parse(dlink) );                   }
         else                                      { intent = new Intent( mContext, com.unity3d.player.UnityPlayerActivity.class ); }
@@ -85,7 +101,7 @@ public class PictureStyleNotification extends AsyncTask<String, Void, Bitmap>
         }
         else
         {
-             pendingIntent = PendingIntent.getActivity(mContext, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+             pendingIntent = PendingIntent.getActivity(mContext, 0, intent, PendingIntent.FLAG_ONE_SHOT );
         }
         
         int notifID = ID++;
@@ -108,7 +124,6 @@ public class PictureStyleNotification extends AsyncTask<String, Void, Bitmap>
                 .setAutoCancel(true)
                 .setContentIntent( pendingIntent )
                 .setColor( color )
-                //.setSortKey( typeString )
                 .setDefaults( NotificationCompat.DEFAULT_ALL )
                 .setPriority( NotificationCompat.PRIORITY_HIGH )
                 .setGroup(packageName+"default");

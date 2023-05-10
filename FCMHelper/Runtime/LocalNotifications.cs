@@ -14,14 +14,19 @@ namespace com.binouze.FCMHelper
         private static extern void _FCMHelper_SendLocalNotification(string instanceId, string title, string body, string imageUrl, int timeIntervalSecs);
         #endif
         
-        public static void Send( string title, string body, string imageUrl, int delaySec = 0 )
+        #if UNITY_ANDROID
+        public static void Send( string title, string body, string imageUrl, int delaySec = 0, string color = "#ffffff", string deeplink = "", string channelId = "default", string channelName = "default", string icon = "ic_stat_ic_notification" )
         {
             //String title, String message, String image, string color, String dlink, String channelId, String channelName, String icon, String packageName
             
-            #if UNITY_ANDROID
             using var cls = new AndroidJavaClass("com.binouze.LocalNotifications");
-            cls.CallStatic("Send", title, body, imageUrl, "#ffffff", "", "default", "default", "ic_stat_ic_notification", "com.lagoonsoft.pb" );
-            #elif UNITY_IOS
+            cls.CallStatic("Send", title, body, imageUrl, color, deeplink, channelId, channelName, icon, Application.identifier );
+        }
+        #endif
+        
+        #if UNITY_IOS
+        public static void Send( string title, string body, string imageUrl, int delaySec = 0 )
+        {
             _FCMHelper_SendLocalNotification(
                 instanceId:       DateTime.Now.ToString("yyyyMMddhhmmss"), 
                 title:            title,
@@ -29,7 +34,7 @@ namespace com.binouze.FCMHelper
                 imageUrl:         imageUrl, // currently not working with external urls
                 timeIntervalSecs: delaySec
             );
-            #endif
         }
+        #endif
     }
 }
