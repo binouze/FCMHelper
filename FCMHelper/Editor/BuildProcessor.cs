@@ -10,7 +10,7 @@ namespace com.binouze.fcmhelper.Plugins.FCMHelper.Editor
 {
     public class BuildProcessor : IPostprocessBuildWithReport
     {
-        private const string PATH_TO_NOTIFICATION_SERVICE = "Packages/com.binouze.fcmhelper/FCMHelper/NotificationServiceExtension";
+        private const string PATH_TO_NOTIFICATION_SERVICE = "Packages/com.binouze.fcmhelper/FCMHelper/Editor/NotificationServiceExtension";
         
         public int  callbackOrder => 41; //must be between 40 and 50 to ensure that it's not overriden by Podfile generation (40) and that it's added before "pod install" (50)
 
@@ -33,36 +33,60 @@ namespace com.binouze.fcmhelper.Plugins.FCMHelper.Editor
                 using var sw = File.AppendText(pathToBuiltProject + "/Podfile");
                 // Add FirebaseMessaging to NotificationServiceExtension
                 sw.WriteLine("\ntarget 'NotificationServiceExtension' do\n  pod 'Firebase/Messaging', '10.7.0'\nend");
+
+                var dirname   = pathToBuiltProject + "/NotificationServiceExtension";
+                var swiftFile = dirname            + "/NotificationService.swift";
+                var plistFile = dirname            + "/Info.plist";
+                // create directory if not exists
+                Directory.CreateDirectory( dirname );
+                // copy files to destination directory
+                File.Copy(PATH_TO_NOTIFICATION_SERVICE +"/NotificationService.swift", swiftFile);
+                File.Copy(PATH_TO_NOTIFICATION_SERVICE +"/Info.plist",                plistFile);
                 
-                
+                // get main project
                 var projPath = PBXProject.GetPBXProjectPath(pathToBuiltProject);
                 var proj     = new PBXProject();
-                proj.ReadFromFile (projPath);
-                var targetGUID = proj.GetUnityMainTargetGuid();
-     
-                var plistPath = pathToBuiltProject + "/Info.plist";
-                var plist     = new PlistDocument();
-                plist.ReadFromFile(plistPath);
-     
-                const string notificationServicePlistPath = PATH_TO_NOTIFICATION_SERVICE + "/Info.plist";
-                
-                var notificationServicePlist = new PlistDocument();
-                notificationServicePlist.ReadFromFile(notificationServicePlistPath);
-                notificationServicePlist.root.SetString("CFBundleShortVersionString", PlayerSettings.bundleVersion);
-                notificationServicePlist.root.SetString("CFBundleVersion", PlayerSettings.iOS.buildNumber);
-                
-                var notificationServiceTarget = proj.AddAppExtension( targetGUID, "notificationservice", PlayerSettings.GetApplicationIdentifier(BuildTargetGroup.iOS) + ".notificationservice", notificationServicePlistPath);
-                proj.AddFileToBuild(notificationServiceTarget, proj.AddFile(PATH_TO_NOTIFICATION_SERVICE + "/NotificationService.swift", "NotificationServiceExtension/NotificationService.swift"));
-                proj.AddFrameworkToProject(notificationServiceTarget, "NotificationCenter.framework", true);
-                proj.AddFrameworkToProject(notificationServiceTarget, "UserNotifications.framework", true);
-                proj.SetBuildProperty(notificationServiceTarget, "ARCHS", "$(ARCHS_STANDARD)");
-                proj.SetBuildProperty(notificationServiceTarget, "DEVELOPMENT_TEAM", PlayerSettings.iOS.appleDeveloperTeamID);
-                notificationServicePlist.WriteToFile(notificationServicePlistPath);
-     
-                proj.WriteToFile(projPath);
-                plist.WriteToFile(plistPath);
+                proj.ReadFromFile(projPath);
+                var mainGUID = proj.GetUnityMainTargetGuid();
 
-                Debug.Log( "FCMHelper - PostProcessBuild_iOS Done!" );
+                // get iOS bundleID
+                var bundleID = PlayerSettings.GetApplicationIdentifier( BuildTargetGroup.iOS ) + ".NotificationServiceExtension";
+                
+                // add the extension
+                var notifExtensionTarget = proj.AddAppExtension( 
+                    mainGUID, 
+                    "NotificationServiceExtension", 
+                    bundleID, 
+                    "NotificationServiceExtension/Info.plist");
+                
+                // add the files needed
+                proj.AddFileToBuild(notifExtensionTarget, proj.AddFile(swiftFile, "NotificationServiceExtension/NotificationService.swift"));
+                proj.AddFile( plistFile, "NotificationServiceExtension/Info.plist");
+                
+                // define build properties
+                proj.SetBuildProperty(notifExtensionTarget, "DEVELOPMENT_TEAM", PlayerSettings.iOS.appleDeveloperTeamID);
+                proj.SetBuildProperty(notifExtensionTarget, "ENABLE_BITCODE", "NO");
+                proj.SetBuildProperty(notifExtensionTarget, "SWIFT_VERSION", "5.0");
+                proj.SetBuildProperty(notifExtensionTarget, "TARGETED_DEVICE_FAMILY", "1,2");
+                proj.SetBuildProperty(notifExtensionTarget, "GENERATE_INFOPLIST_FILE", "YES");
+                proj.SetBuildProperty(notifExtensionTarget, "ALWAYS_SEARCH_USER_PATHS", "NO");
+                proj.SetBuildProperty(notifExtensionTarget, "CODE_SIGN_IDENTITY", "iPhone Developer");
+                proj.SetBuildProperty(notifExtensionTarget, "ENABLE_NS_ASSERTIONS", "NO");
+                proj.SetBuildProperty(notifExtensionTarget, "SKIP_INSTALL", "YES");
+                proj.SetBuildProperty(notifExtensionTarget, "COPY_PHASE_STRIP", "NO");
+                proj.SetBuildProperty(notifExtensionTarget, "INFOPLIST_KEY_CFBundleDisplayName", "NotificationServiceExtension");
+                proj.SetBuildProperty(notifExtensionTarget, "PRODUCT_BUNDLE_IDENTIFIER", bundleID);
+                proj.SetBuildProperty(notifExtensionTarget, "GCC_C_LANGUAGE_STANDARD", "gnu11");
+                proj.SetBuildProperty(notifExtensionTarget, "CLANG_CXX_LANGUAGE_STANDARD", "gnu++20");
+                proj.SetBuildProperty(notifExtensionTarget, "CLANG_ENABLE_MODULES", "YES");
+                proj.SetBuildProperty(notifExtensionTarget, "CLANG_ENABLE_OBJC_ARC", "YES");
+                proj.SetBuildProperty(notifExtensionTarget, "CLANG_ENABLE_OBJC_WEAK", "YES");
+                proj.SetBuildProperty(notifExtensionTarget, "CURRENT_PROJECT_VERSION", PlayerSettings.iOS.buildNumber);
+                proj.SetBuildProperty(notifExtensionTarget, "SWIFT_EMIT_LOC_STRINGS", "YES");
+                proj.SetBuildProperty(notifExtensionTarget, "VALIDATE_PRODUCT", "YES");
+
+                // save
+                proj.WriteToFile(projPath);
             }
         }
     }
