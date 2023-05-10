@@ -6,7 +6,7 @@ using UnityEditor.iOS.Xcode;
 using UnityEditor.iOS.Xcode.Extensions;
 using UnityEngine;
 
-namespace com.binouze.fcmhelper.Plugins.FCMHelper.Editor
+namespace com.binouze.FCMHelper.Editor
 {
     public class BuildProcessor : IPostprocessBuildWithReport
     {

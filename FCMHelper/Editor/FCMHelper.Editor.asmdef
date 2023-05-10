@@ -1,6 +1,6 @@
 {
-    "name": "FCMHelper",
-    "rootNamespace": "",
+    "name": "FCMHelper.Editor",
+    "rootNamespace": "com.binouze.FCMHelper.Editor",
     "references": [],
     "includePlatforms": [
         "Editor"
