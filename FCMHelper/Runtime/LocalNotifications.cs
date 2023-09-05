@@ -1,9 +1,10 @@
-using System;
 #if UNITY_IOS
 using System.Runtime.InteropServices;
+using System;
 #endif
 #if UNITY_ANDROID
 using UnityEngine;
+using System.Text.RegularExpressions;
 #endif
 namespace com.binouze.FCMHelper
 {
@@ -19,8 +20,16 @@ namespace com.binouze.FCMHelper
         {
             //String title, String message, String image, string color, String dlink, String channelId, String channelName, String icon, String packageName
             
+            if( string.IsNullOrEmpty(color) || !IsValidColor( color ) )
+                color = "#ffffff";
+            
             using var cls = new AndroidJavaClass("com.binouze.LocalNotifications");
             cls.CallStatic("Send", title, body, imageUrl, color, deeplink, channelId, channelName, icon, Application.identifier );
+        }
+        
+        public static bool IsValidColor(string hc)
+        {
+            return Regex.IsMatch(hc, @"[#][0-9A-Fa-f]{6}\b");
         }
         #endif
         
