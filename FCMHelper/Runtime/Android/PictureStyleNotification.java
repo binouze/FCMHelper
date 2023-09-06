@@ -50,12 +50,16 @@ public class PictureStyleNotification// extends AsyncTask<String, Void, Bitmap>
         this.titre         = titre;
         this.texte         = texte;
         //this.color         = Color.parseColor(colorString);
+        
+        int tempColor;
         try {
-            this.color = Color.parseColor(colorString);
-        } catch (IllegalArgumentException ex) {
+            tempColor = Color.parseColor(colorString);
+        } catch (Exception ex) {
             // Handle exception here, ex.printStackTrace(), show a message or set a default color
-            this.color = Color.WHITE; // default color if the string is not valid
+            tempColor = Color.WHITE; // default color if the string is not valid
         }
+        
+        this.color         = tempColor;
         this.dlink         = dlink;
         this.channelId     = channelId;
         this.channelName   = channelName;
