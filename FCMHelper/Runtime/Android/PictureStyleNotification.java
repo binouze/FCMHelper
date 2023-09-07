@@ -95,6 +95,10 @@ public class PictureStyleNotification// extends AsyncTask<String, Void, Bitmap>
                 handler.post( () -> onPostExecute( bmpData ) );
             });
         }
+        else
+        {
+            onPostExecute( null );
+        }
     }
 
     protected void onPostExecute( Bitmap result )
