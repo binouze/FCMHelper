@@ -1,6 +1,6 @@
 {
   "name": "com.binouze.fcmhelper",
-  "version": "1.0.7",
+  "version": "12.1.0",
   "unity": "2021.3",
   "displayName": "Firebase Messaging Helper",
   "description": "Firebase Messaging integration for Unity with image support on push notifications",
