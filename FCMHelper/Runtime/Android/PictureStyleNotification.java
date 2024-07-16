@@ -111,6 +111,8 @@ public class PictureStyleNotification// extends AsyncTask<String, Void, Bitmap>
         PendingIntent pendingIntent = null;
         if( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S ) 
         {
+            // convert implicit intent to explicit intent for Android 14 compatibility
+            intent.setPackage(mContext.getPackageName());
             pendingIntent = PendingIntent.getActivity( mContext, 0, intent, PendingIntent.FLAG_MUTABLE );
         }
         else
