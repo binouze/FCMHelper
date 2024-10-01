@@ -32,9 +32,9 @@ FirebaseMessaging for Unity does not support showing push notifications while th
 - On Android you can send a local notification using `LocalNotification.Send()` function when receiving a message from inside the game like this:
 
 ```csharp
-...
+//...
 FirebaseMessaging.MessageReceived += OnMessageReceived;
-...
+//...
 
 private static void OnMessageReceived( object sender, MessageReceivedEventArgs e ) 
 {
@@ -68,7 +68,7 @@ public static string GetValue( this IDictionary<string, string> dico, string key
 
 - On iOS you must override tha app controller to handle the `willPresentNotification` function like this:
 
-```c++
+```objective-c
 @interface UnityForegroundNotifController : UnityAppController<UNUserNotificationCenterDelegate> { }
 @implementation UnityForegroundNotifController
 
@@ -113,6 +113,5 @@ IMPL_APP_CONTROLLER_SUBCLASS(UnityForegroundNotifController)
 
 ## Firebase SDK support
 
-Tested with Firebase SDK:
- - 10.7.0
- - 11.0.0
+Work with Firebase SDK:
+ - 12.3.0
