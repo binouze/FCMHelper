@@ -32,7 +32,7 @@ namespace com.binouze.FCMHelper.Editor
                 // Patching the PodFile
                 using var sw = File.AppendText(pathToBuiltProject + "/Podfile");
                 // Add FirebaseMessaging to NotificationServiceExtension
-                sw.WriteLine("\ntarget 'NotificationServiceExtension' do\n  pod 'Firebase/Messaging', '10.28.1'\n  pod 'GoogleUtilities', '~> 7.13.3'\nend");
+                sw.WriteLine("\ntarget 'NotificationServiceExtension' do\n  pod 'Firebase/Messaging', '11.2.0'\n  pod 'GoogleUtilities', '~> 8.0'\nend");
 
                 var dirname   = pathToBuiltProject + "/NotificationServiceExtension";
                 var swiftFile = dirname            + "/NotificationService.swift";
