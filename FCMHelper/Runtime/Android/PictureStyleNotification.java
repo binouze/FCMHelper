@@ -104,8 +104,8 @@ public class PictureStyleNotification// extends AsyncTask<String, Void, Bitmap>
     protected void onPostExecute( Bitmap result )
     {
         Intent intent; 
-        if( dlink != null && dlink.length() > 1 ) { intent = new Intent( Intent.ACTION_VIEW, Uri.parse(dlink) );                   }
-        else                                      { intent = new Intent( mContext, com.unity3d.player.UnityPlayerActivity.class ); }
+        if( dlink != null && dlink.length() > 1 ) { intent = new Intent( Intent.ACTION_VIEW, Uri.parse(dlink) );                                }
+        else                                      { intent = new Intent( mContext, com.unity3d.player.UnityPlayer.currentActivity.getClass() ); }
         intent.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
         
         PendingIntent pendingIntent = null;
