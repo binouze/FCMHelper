@@ -29,6 +29,11 @@ namespace com.binouze.FCMHelper.Editor
         {
             if( target == BuildTarget.iOS )
             {
+                // NotificationServiceExtension already added
+                var podcontent = File.ReadAllText( pathToBuiltProject + "/Podfile" );
+                if( podcontent.Contains( "target 'NotificationServiceExtension' do" ) )
+                    return;
+                
                 // Patching the PodFile
                 using var sw = File.AppendText(pathToBuiltProject + "/Podfile");
                 // Add FirebaseMessaging to NotificationServiceExtension
