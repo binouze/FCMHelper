@@ -39,6 +39,9 @@ namespace com.binouze.FCMHelper.Editor
                 var plistFile = dirname            + "/Info.plist";
                 // create directory if not exists
                 Directory.CreateDirectory( dirname );
+                // remove previous file if exists (build with append)
+                File.Delete( swiftFile );
+                File.Delete( plistFile );
                 // copy files to destination directory
                 File.Copy(PATH_TO_NOTIFICATION_SERVICE +"/NotificationService.swift", swiftFile);
                 File.Copy(PATH_TO_NOTIFICATION_SERVICE +"/Info.plist",                plistFile);
