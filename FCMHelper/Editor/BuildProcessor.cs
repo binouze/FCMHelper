@@ -92,7 +92,9 @@ namespace com.binouze.FCMHelper.Editor
                 proj.SetBuildProperty(notifExtensionTarget, "CURRENT_PROJECT_VERSION", PlayerSettings.iOS.buildNumber);
                 proj.SetBuildProperty(notifExtensionTarget, "SWIFT_EMIT_LOC_STRINGS", "YES");
                 proj.SetBuildProperty(notifExtensionTarget, "VALIDATE_PRODUCT", "YES");
-
+                proj.SetBuildProperty(notifExtensionTarget, "IPHONEOS_DEPLOYMENT_TARGET", PlayerSettings.iOS.targetOSVersionString);
+                proj.SetBuildProperty(notifExtensionTarget, "MARKETING_VERSION", PlayerSettings.bundleVersion);
+                
                 // save
                 proj.WriteToFile(projPath);
             }
